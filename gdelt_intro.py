@@ -32,12 +32,12 @@ def main():
         df = pd.read_pickle(cache_file)
     else:
         print("Querying GDELT data...")
-        df = gd2.Search(generate_gdelt_query('2025-11-29', 30), table = 'events', coverage = True)
+        df = gd2.Search(generate_gdelt_query('2025-11-29', 5), table = 'events', coverage = True)
         print(f"Saving data to {cache_file}...")
         df.to_pickle(cache_file)
 
     #view all cols:
-    #print(df.columns)
+    print(df.columns)
     
     df['date'] = pd.to_datetime(df['SQLDATE'], format='%Y%m%d')
 
