@@ -17,7 +17,7 @@ def query_gdelt_events(start_date_str, num_days, date_format = "%Y %m %d"):
         date_string = current_date.strftime(date_format)
         data = gd2.Search(date_string, table = 'events', coverage = True)
 
-        filtered_df = data[['GLOBALEVENTID', 'SQLDATE', 'GoldsteinScale', 'AvgTone']]
+        filtered_df = data[['GLOBALEVENTID', 'SQLDATE', 'GoldsteinScale', 'AvgTone', 'NumArticles', 'QuadClass', 'ActionGeo_CountryCode']]
         final_df = pd.concat([final_df, filtered_df], ignore_index=True)
     
     return final_df
@@ -34,7 +34,19 @@ def main():
         print(f"Saving data to {cache_file}...")
         df.to_pickle(cache_file)
     
-    print(df.columns)
+    new_df = df.groupby(['ActionGeo_CountryCode', 'SQLDATE']).agg({
+        'AvgTone' : 'mean',
+        'NumArticles' : 'sum',
+        'QuadClass' : lambda x: (x==4).sum() / ((x==1).sum() + 1)
+    })
+
+    print(new_df.columns)
+
+    print(new_df.iloc[30, 0])
+
+
+
+    
 
 
 if __name__ == "__main__":
